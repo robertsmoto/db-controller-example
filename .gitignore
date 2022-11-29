@@ -11,6 +11,7 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# put .yaml files in ignore dir, keeps them out of the git repo
 ignore/
 
 # Dependency directories (remove the comment below to include it)

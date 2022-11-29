@@ -8,6 +8,6 @@ type Member struct {
 // MemberDataLayer interface ..
 type MemberDataAccessLayer interface {
 	Get(args []interface{}) (interface{}, error)
-	Modify(Key string, args ...interface{}) (*Member, error)
+	Modify(args []interface{}) error
 	Save(member *Member) error
 }

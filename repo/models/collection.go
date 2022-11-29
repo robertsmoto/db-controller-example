@@ -7,8 +7,5 @@ type Collection struct {
 
 // CollectionDataLayer interface ..
 type CollectionDataLayer interface {
-	Get(Key string) (*Collection, error)
-	Modify(Key string, args ...interface{}) (*Collection, error)
-	Save(coll *Collection) error
-	Delete(coll *Collection) error
+	// put function signature here
 }

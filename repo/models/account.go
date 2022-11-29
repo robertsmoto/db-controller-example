@@ -8,3 +8,8 @@ type Account struct {
 	IsCurrent bool   `json:"isCurrent" validate:"bool"`
 	CreatedAt string `json:"createdAt"`
 }
+
+// AccountDataLayer interface ..
+type AccountDataAccessLayer interface {
+	// put func signature here ...
+}

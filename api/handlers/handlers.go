@@ -86,12 +86,15 @@ func (h *BaseHandler) GetMemberHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *BaseHandler) GetCollectionHandler(w http.ResponseWriter, r *http.Request) {
+	// not implemented
 }
 
 // for use with full text search
 func (h *BaseHandler) GetSearchHandler(w http.ResponseWriter, r *http.Request) {
+	// not implemented
 }
 
 // creates or updates member(s) and collection(s)
 func (h *BaseHandler) PutMemberHandler(w http.ResponseWriter, r *http.Request) {
+	// not implemented
 }

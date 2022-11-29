@@ -3,27 +3,52 @@ package sqldb
 import (
 	"database/sql"
 
+	"github.com/robertsmoto/db_controller_example/config"
 	"github.com/robertsmoto/db_controller_example/repo/models"
 )
 
-// UserRepo implements models.UserRepository
-type UserRepo struct {
-	DB *sql.DB
+// MemberDAL implements the models.MemberDataAccessLayer interface
+type BaseDAL struct {
+	DB   *sql.DB
+	conf *config.Config
 }
 
-// NewUserRepo ..
-func NewUserRepo(db *sql.DB) *UserRepo {
-	return &UserRepo{
-		DB: db,
+func NewBaseDAL(db *sql.DB, conf *config.Config) *BaseDAL {
+	return &BaseDAL{
+		DB:   db,
+		conf: conf,
 	}
 }
 
-// FindByID ..
-func (r *UserRepo) FindByID(ID int) (*models.User, error) {
-	return &models.User{}, nil
+type MemberDAL struct {
+	BaseDAL
+}
+
+// Contructor
+func NewMemberDAL(dal *BaseDAL) *MemberDAL {
+	return &MemberDAL{
+		BaseDAL: *dal,
+	}
+}
+
+/*
+These may not be the best function signatures for a relational db, but
+I'm assuming they could be made to work. You would most likely want to return
+a model instance rather than in interface{}
+*/
+
+// Get ..
+func (dal *MemberDAL) Get(args []interface{}) (interface{}, error) {
+	// not implemented
+	return nil, nil
+}
+
+// Modify ..
+func (dal *MemberDAL) Modify(args []interface{}) error {
+	return nil
 }
 
 // Save ..
-func (r *UserRepo) Save(user *models.User) error {
+func (dal *MemberDAL) Save(member *models.Member) error {
 	return nil
 }

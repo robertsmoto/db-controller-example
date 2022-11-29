@@ -12,10 +12,44 @@ import (
 )
 
 /*
-  Distinguish between
+This config file structure works well if you want to roll your own config fies.
+Use three separate files:
   1. env.yaml (global settings)
   2. ini.yaml (private passwords)
   3. and settings.yaml (application settings)
+And put them in separate server dirs:
+  1. development
+  2. staging
+  3. production
+
+Put symlinks in:
+  /etc/<project_name>/
+    /development
+      env.yaml # <-- these are symlinks
+      ini.yaml
+      settings.yaml
+    /staging
+      env.yaml
+      ini.yaml
+      settings.yaml
+    /production
+      env.yaml
+      ini.yaml
+      settings.yaml
+Symlinks point to actual files located here:
+  /<project dir>/config/ignore # <-- /ignore in .gitignore to keep files out of repo
+    /development
+      env.yaml # <-- actual files
+      ini.yaml
+      settings.yaml
+    /staging
+      env.yaml
+      ini.yaml
+      settings.yaml
+    /production
+      env.yaml
+      ini.yaml
+      settings.yaml
 
   Switch between server environments use:
   SERVER=[development|staging|production] go run main.go
@@ -50,10 +84,11 @@ const (
 )
 
 func init() {
-	// load all settings files
+	// load all settings files, func Load() at bottom of page.
 	Conf = Load()
 }
 
+// struct can be passed to middleware and handlers that need it.
 type Config struct {
 	// #######################################
 	// Env

@@ -1,6 +1,7 @@
 package models
 
 /*
+thinking about other enum types that may be needed ....
 transaction types -- time series??
 asn
 transfer
@@ -8,6 +9,7 @@ refunc
 order
 */
 
+// tracking schema versions
 type SchemaVersion int
 
 const (
@@ -15,6 +17,7 @@ const (
 	// add more schema versions here
 )
 
+// primary member Redis Sorted Sets
 type MemberType int
 
 const (
@@ -57,6 +60,7 @@ const (
 	product
 )
 
+// using the CollectionType enums to create Redis Sorted Set keys
 type CollectionType int
 
 const (

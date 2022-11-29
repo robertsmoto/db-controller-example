@@ -47,6 +47,7 @@ func main() {
 	// connect handler(s)
 	memberDAL := redisdb.NewMemberDAL(redisdb.NewBaseDAL(dataDb, conf))
 	memberHandler := handlers.NewBaseHandler(memberDAL)
+	// router
 	r := mux.NewRouter().StrictSlash(true)
 	//middlewares
 	r.Use(middleware.TimerMiddleware) //<-- no connection
@@ -55,16 +56,12 @@ func main() {
 	r.Use(apiConn.RateLimiterMiddleware)
 	r.Use(acctConn.AccountAuthMiddleware)
 	r.Use(middleware.ContentAuthMiddleware) //<-- no connection
-
-	//rest
-	// image
-	// member
-	// collection
-	// search
+	// routes
 	r.HandleFunc("/member", memberHandler.GetMemberHandler).
 		Methods("GET")
 	r.HandleFunc("/member", memberHandler.PutMemberHandler).
 		Methods("PUT")
+		// more here
 
 	srv := &http.Server{
 		Handler: r,

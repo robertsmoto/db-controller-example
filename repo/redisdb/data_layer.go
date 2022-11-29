@@ -36,13 +36,13 @@ func NewMemberDAL(dal *BaseDAL) *MemberDAL {
 // Get ..
 func (dal *MemberDAL) Get(args []interface{}) (interface{}, error) {
 	fmt.Printf("\n## paths --> %[1]v %[1]T", args)
-	// deal with collections
+	// add ID to various collections, and possibly organize search here
 	return dal.DB.Do("JSON.GET", args...)
 }
 
 // Modify ..
-func (dal *MemberDAL) Modify(Key string, args ...interface{}) (*models.Member, error) {
-	return &models.Member{}, nil
+func (dal *MemberDAL) Modify(args []interface{}) error {
+	return nil
 }
 
 // Save ..

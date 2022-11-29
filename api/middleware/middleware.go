@@ -16,16 +16,17 @@ import (
 	"github.com/robertsmoto/db_controller_example/repo/redisdb"
 )
 
+// times request processing
 func TimerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// sets the start time of the request
 		t1 := time.Now()
 		ctx := context.WithValue(r.Context(), "startTime", t1)
-		println("## middle 01")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
+// adds some values to the context
 func ContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		acct := new(models.Account)
@@ -40,11 +41,11 @@ func ContextMiddleware(next http.Handler) http.Handler {
 		}
 		ctx1 := context.WithValue(r.Context(), "Acct", acct)
 		ctx2 := context.WithValue(ctx1, "Conf", config.Conf)
-		println("## middle 02")
 		next.ServeHTTP(w, r.WithContext(ctx2))
 	})
 }
 
+// api rate limiter
 func (h *MiddlewareConn) RateLimiterMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// information passed from client in the request header
@@ -90,7 +91,6 @@ func (h *MiddlewareConn) RateLimiterMiddleware(next http.Handler) http.Handler {
 			http.Error(w, `{"errors"
       :"api limit reached, access denied"}`, http.StatusForbidden)
 		} else {
-			println("## middle 03")
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
 	})
@@ -119,7 +119,6 @@ func (h *MiddlewareConn) AccountAuthMiddleware(next http.Handler) http.Handler {
 			r.Body = msgReadCloser
 			http.Error(w, `{"errors":"not authorized"}`, http.StatusForbidden)
 		} else {
-			println("## middle 04")
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
 	})
@@ -136,7 +135,6 @@ func ContentAuthMiddleware(next http.Handler) http.Handler {
 			r.Body = msgReadCloser
 			http.Error(w, `{"errors":"content type not allowed"}`, http.StatusForbidden)
 		}
-		println("## middle 05")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
