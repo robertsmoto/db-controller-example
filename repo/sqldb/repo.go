@@ -1,9 +1,9 @@
-package repositories
+package sqldb
 
 import (
 	"database/sql"
 
-	"github.com/robertsmoto/db_controller_example/models"
+	"github.com/robertsmoto/db_controller_example/api/models"
 )
 
 // UserRepo implements models.UserRepository
