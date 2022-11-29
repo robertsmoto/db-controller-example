@@ -5,8 +5,8 @@ type User struct {
 	Name string
 }
 
-// UserRepository ..
-type UserRepository interface {
-	FindByID(ID int) (*User, error)
-	Save(user *User) error
+// UserDataLayer interface ..
+type UserDataLayer interface {
+	GetByID(ID int) (*User, error)
+	SaveJson(user *User) error
 }

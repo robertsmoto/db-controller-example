@@ -21,6 +21,7 @@ func TimerMiddleware(next http.Handler) http.Handler {
 		// sets the start time of the request
 		t1 := time.Now()
 		ctx := context.WithValue(r.Context(), "startTime", t1)
+		println("## middle 01")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -39,11 +40,12 @@ func ContextMiddleware(next http.Handler) http.Handler {
 		}
 		ctx1 := context.WithValue(r.Context(), "Acct", acct)
 		ctx2 := context.WithValue(ctx1, "Conf", config.Conf)
+		println("## middle 02")
 		next.ServeHTTP(w, r.WithContext(ctx2))
 	})
 }
 
-func RateLimiterMiddleware(next http.Handler) http.Handler {
+func (h *MiddlewareConn) RateLimiterMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// information passed from client in the request header
 		var err error
@@ -53,34 +55,34 @@ func RateLimiterMiddleware(next http.Handler) http.Handler {
 		hitsKey := fmt.Sprintf("%s:hits", acct.ID)
 		holdKey := fmt.Sprintf("%s:hold", acct.ID)
 		holdCntKey := fmt.Sprintf("%s:cntr", acct.ID)
-		rds := redisdb.NewRedisConn(ctx, redisdb.Api)
-		defer rds.Conn.Close()
-		apiHits, err := rds.Conn.Do("INCR", hitsKey)
+		rds := redisdb.ConnectDB(redisdb.Api)
+		defer rds.Close()
+		apiHits, err := rds.Do("INCR", hitsKey)
 		if apiHits.(int64) == 1 {
-			_, err = rds.Conn.Do("EXPIRE", hitsKey, conf.ThresholdTime)
+			_, err = rds.Do("EXPIRE", hitsKey, conf.ThresholdTime)
 		}
 		if apiHits.(int64) >= conf.ThresholdHits {
 			// reset the hits key
-			_, err = rds.Conn.Do("SET", hitsKey, 1)
-			_, err = rds.Conn.Do("EXPIRE", hitsKey, conf.ThresholdTime)
+			_, err = rds.Do("SET", hitsKey, 1)
+			_, err = rds.Do("EXPIRE", hitsKey, conf.ThresholdTime)
 			// incr hold counter
-			holdCntr, _ := rds.Conn.Do("INCR", holdCntKey)
+			holdCntr, _ := rds.Do("INCR", holdCntKey)
 			if holdCntr.(int64) == 1 {
-				_, err = rds.Conn.Do("EXPIRE", holdCntKey, (60 * 60 * 24))
+				_, err = rds.Do("EXPIRE", holdCntKey, (60 * 60 * 24))
 			}
 			// this sets and increments a holdKey
-			_, err = rds.Conn.Do("INCR", holdKey)
+			_, err = rds.Do("INCR", holdKey)
 			// ttl for holdKey based on exponent of hold counter
 			holdTime := int(math.Pow(
 				float64(conf.ThresholdTime), float64(holdCntr.(int64))))
-			_, err = rds.Conn.Do("EXPIRE", holdKey, holdTime)
+			_, err = rds.Do("EXPIRE", holdKey, holdTime)
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 		// check if holdKey exists
-		holdExists, _ := rds.Conn.Do("GET", holdKey)
-		defer rds.Conn.Close()
+		holdExists, _ := rds.Do("GET", holdKey)
+		defer rds.Close()
 		if holdExists != nil {
 			msg := strings.NewReader("")
 			msgReadCloser := io.NopCloser(msg)
@@ -88,21 +90,26 @@ func RateLimiterMiddleware(next http.Handler) http.Handler {
 			http.Error(w, `{"errors"
       :"api limit reached, access denied"}`, http.StatusForbidden)
 		} else {
+			println("## middle 03")
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
 	})
 }
 
 // authorize account user
-func AccountAuthMiddleware(next http.Handler) http.Handler {
+func (h *MiddlewareConn) AccountAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// information passed from client in the request header
 		ctx := r.Context()
 		// get request account
 		rqstAcct := ctx.Value("Acct").(*models.Account)
 		// get repo account
-		rds := redisdb.NewRedisConn(ctx, redisdb.Account)
-		result, _ := rds.Conn.Do("JSON.GET", rqstAcct.ID)
+		rds := redisdb.ConnectDB(redisdb.Account)
+		result, _ := rds.Do("JSON.GET", rqstAcct.ID)
+		// expect result to be []byte
+		if result == nil {
+			result = []byte("{}")
+		}
 		repoAcct := new(models.Account)
 		json.Unmarshal(result.([]byte), repoAcct)
 		//validate the account
@@ -112,6 +119,7 @@ func AccountAuthMiddleware(next http.Handler) http.Handler {
 			r.Body = msgReadCloser
 			http.Error(w, `{"errors":"not authorized"}`, http.StatusForbidden)
 		} else {
+			println("## middle 04")
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
 	})
@@ -128,6 +136,7 @@ func ContentAuthMiddleware(next http.Handler) http.Handler {
 			r.Body = msgReadCloser
 			http.Error(w, `{"errors":"content type not allowed"}`, http.StatusForbidden)
 		}
+		println("## middle 05")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

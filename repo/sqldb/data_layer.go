@@ -3,18 +3,18 @@ package sqldb
 import (
 	"database/sql"
 
-	"github.com/robertsmoto/db_controller_example/api/models"
+	"github.com/robertsmoto/db_controller_example/repo/models"
 )
 
 // UserRepo implements models.UserRepository
 type UserRepo struct {
-	db *sql.DB
+	DB *sql.DB
 }
 
 // NewUserRepo ..
 func NewUserRepo(db *sql.DB) *UserRepo {
 	return &UserRepo{
-		db: db,
+		DB: db,
 	}
 }
 
