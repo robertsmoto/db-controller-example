@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/techinscribed/repository-db/models"
+	"github.com/robertsmoto/db-controller-examples/models"
 )
 
 // BaseHandler will hold everything that controller needs

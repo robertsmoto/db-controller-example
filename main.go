@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/techinscribed/repository-db/controllers"
-	"github.com/techinscribed/repository-db/repositories"
-	"github.com/techinscribed/repository-db/sqldb"
+	"github.com/robertsmoto/db-controller-examples/controllers"
+	"github.com/robertsmoto/db-controller-examples/repositories"
+	"github.com/robertsmoto/db-controller-examples/sqldb"
 )
 
 func main() {
