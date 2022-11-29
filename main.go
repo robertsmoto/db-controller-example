@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/robertsmoto/db-controller-examples/controllers"
-	"github.com/robertsmoto/db-controller-examples/repositories"
-	"github.com/robertsmoto/db-controller-examples/sqldb"
+	"github.com/robertsmoto/db-controller-examples/api/handlers"
+	"github.com/robertsmoto/db-controller-examples/repo"
+	"github.com/robertsmoto/db-controller-examples/repo/sqldb"
 )
 
 func main() {
 	db := sqldb.ConnectDB()
 
 	// Create repos
-	userRepo := repositories.NewUserRepo(db)
+	userRepo := repo.NewUserRepo(db)
 
-	h := controllers.NewBaseHandler(userRepo)
+	h := handlers.NewBaseHandler(userRepo)
 
 	http.HandleFunc("/", h.HelloWorld)
 
