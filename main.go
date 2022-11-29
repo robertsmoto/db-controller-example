@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/robertsmoto/db-controller-examples/api/handlers"
-	"github.com/robertsmoto/db-controller-examples/repo"
-	"github.com/robertsmoto/db-controller-examples/repo/sqldb"
+	"github.com/robertsmoto/db_controller_example/api/handlers"
+	"github.com/robertsmoto/db_controller_example/repo"
+	"github.com/robertsmoto/db_controller_example/repo/sqldb"
 )
 
 func main() {

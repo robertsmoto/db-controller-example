@@ -3,7 +3,7 @@ package repositories
 import (
 	"database/sql"
 
-	"github.com/robertsmoto/db-controller-examples/models"
+	"github.com/robertsmoto/db_controller_example/models"
 )
 
 // UserRepo implements models.UserRepository
