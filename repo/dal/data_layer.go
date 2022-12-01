@@ -1,19 +1,18 @@
-package sqldb
+package dal
 
 import (
-	"database/sql"
-
+	"github.com/gomodule/redigo/redis"
 	"github.com/robertsmoto/db_controller_example/config"
 	"github.com/robertsmoto/db_controller_example/repo/models"
 )
 
 // MemberDAL implements the models.MemberDataAccessLayer interface
 type BaseDAL struct {
-	DB   *sql.DB
+	DB   *redis.Conn
 	conf *config.Config
 }
 
-func NewBaseDAL(db *sql.DB, conf *config.Config) *BaseDAL {
+func NewBaseDAL(db *redis.Conn, conf *config.Config) *BaseDAL {
 	return &BaseDAL{
 		DB:   db,
 		conf: conf,
@@ -49,6 +48,6 @@ func (dal *MemberDAL) Modify(args []interface{}) error {
 }
 
 // Save ..
-func (dal *MemberDAL) Save(member *models.Member) error {
+func (dal *MemberDAL) Save(m *models.Member) error {
 	return nil
 }

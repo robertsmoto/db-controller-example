@@ -11,6 +11,7 @@ import (
 	"github.com/robertsmoto/db_controller_example/api/handlers"
 	"github.com/robertsmoto/db_controller_example/api/middleware"
 	"github.com/robertsmoto/db_controller_example/config"
+	"github.com/robertsmoto/db_controller_example/repo/dal"
 	"github.com/robertsmoto/db_controller_example/repo/redisdb"
 )
 
@@ -45,7 +46,7 @@ func main() {
 	apiConn := middleware.NewMiddlewareConnector(&apiDb, conf)
 	acctConn := middleware.NewMiddlewareConnector(&acctDb, conf)
 	// connect handler(s)
-	memberDAL := redisdb.NewMemberDAL(redisdb.NewBaseDAL(dataDb, conf))
+	memberDAL := dal.NewMemberDAL(dal.NewBaseDAL(&dataDb, conf))
 	memberHandler := handlers.NewBaseHandler(memberDAL)
 	// router
 	r := mux.NewRouter().StrictSlash(true)
